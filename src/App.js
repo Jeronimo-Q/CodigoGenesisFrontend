@@ -1,15 +1,42 @@
 import React, { useState } from 'react';
-import './App.css'; 
+import './App.css';
 
 const App = () => {
   const [referencia, setReferencia] = useState('');
   const [descripcion, setDescripcion] = useState('');
-  const [configuracion, setConfiguracion] = useState('');
+  const [categoria, setCategoria] = useState('');
+  const [genero, setGenero] = useState('');
+  const [tipoPrenda, setTipoPrenda] = useState('');
+
+  
+  const [configuracionPrenda, setConfiguracionPrenda] = useState(['', '', '']); 
+
+  const handleCategoriaChange = (e) => {
+    const nuevaCategoria = e.target.value;
+    setCategoria(nuevaCategoria);
+    setConfiguracionPrenda([nuevaCategoria, configuracionPrenda[1], configuracionPrenda[2]]);
+  };
+
+  const handleGeneroChange = (e) => {
+    const nuevoGenero = e.target.value;
+    setGenero(nuevoGenero);
+    setConfiguracionPrenda([configuracionPrenda[0], nuevoGenero, configuracionPrenda[2]]);
+  };
+
+  const handleTipoPrendaChange = (e) => {
+    const nuevoTipoPrenda = e.target.value;
+    setTipoPrenda(nuevoTipoPrenda);
+    setConfiguracionPrenda([configuracionPrenda[0], configuracionPrenda[1], nuevoTipoPrenda]);
+  };
 
   const handleGuardar = () => {
+    if (!referencia || !descripcion || configuracionPrenda.some(value => value === '')) {
+      alert('Por favor, complete todos los campos antes de guardar.');
+      return;
+    }
     console.log('Referencia:', referencia);
     console.log('Descripción:', descripcion);
-    console.log('Configuración:', configuracion);
+    console.log('Configuración Prenda:', configuracionPrenda.join('-')); 
   };
 
   return (
@@ -20,6 +47,8 @@ const App = () => {
 
       <div className="container">
         <form className="form">
+          
+          {/*Referencia - Descripción */}
           <div className="form-row">
             <div className="input-group">
               <label htmlFor="referencia" className="label">N° Referencia</label>
@@ -42,20 +71,56 @@ const App = () => {
                 onChange={(e) => setDescripcion(e.target.value)}
               />
             </div>
+          </div>
+
+          {/*Categoria, Genero y Tipo de Prenda */}
+          <div className="form-row">
+            <div className="input-group">
+              <label htmlFor="categoria" className="label">Categoría</label>
+              <select
+                id="categoria"
+                value={categoria}
+                onChange={handleCategoriaChange}
+              >
+                <option value="">Seleccione la categoría</option>
+                <option value="Categoria Info">Categoria Info</option>
+
+              </select>
+            </div>
 
             <div className="input-group">
-              <label htmlFor="configuracion" className="label">Configuración Prenda</label>
+              <label htmlFor="genero" className="label">Género</label>
               <select
-                id="configuracion"
-                value={configuracion}
-                onChange={(e) => setConfiguracion(e.target.value)}
+                id="genero"
+                value={genero}
+                onChange={handleGeneroChange}
               >
-                <option value="">Seleccione la configuración</option>
-                <option value="config1">Base de datos</option>
+                <option value="">Seleccione el género</option>
+                <option value="Genero Info">Genero Info</option>
+              </select>
+            </div>
+
+            <div className="input-group">
+              <label htmlFor="tipoPrenda" className="label">Tipo de Prenda</label>
+              <select
+                id="tipoPrenda"
+                value={tipoPrenda}
+                onChange={handleTipoPrendaChange}
+              >
+                <option value="">Seleccione el tipo de prenda</option>
+                <option value="TipoPrenda Info">TipoPrenda Info</option>
               </select>
             </div>
           </div>
 
+          {/*ConfiguracionPrenda */}
+          {configuracionPrenda.every(value => value !== '') && (
+            <div className="form-row">
+              <p><strong>Configuración Prenda:</strong> {configuracionPrenda.join('-')}</p>
+            </div>
+          )}
+
+          {/* botones */}
           <div className="buttons">
             <button type="button" className="btn cerrar" onClick={() => console.log("Cerrando...")}>
               Cerrar
