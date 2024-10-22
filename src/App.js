@@ -8,36 +8,41 @@ let App = () => {
   let [genero, setGenero] = useState('');
   let [tipoPrenda, setTipoPrenda] = useState('');
   let [configuracionPrenda, setConfiguracionPrenda] = useState('');
+  let [isSaved, setIsSaved] = useState(false); // Estado para controlar si se guardó la configuración
 
-  
+  // Actualización de la configuración de la prenda
   useEffect(() => {
-
-    if (categoria && genero && tipoPrenda) {
-      setConfiguracionPrenda(`Categoria: ${categoria} Genero: ${genero} Tipo de prenda: ${tipoPrenda}`);
-    } else {
-      setConfiguracionPrenda('');
+    if (isSaved) {
+      if (categoria && genero && tipoPrenda) {
+        setConfiguracionPrenda(`Categoría: ${categoria}, Género: ${genero}, Tipo de prenda: ${tipoPrenda}`);
+      } else {
+        setConfiguracionPrenda(''); // Si no hay selección, limpiar el texto
+      }
     }
-  }, [categoria, genero, tipoPrenda]);
+  }, [isSaved, categoria, genero, tipoPrenda]);
 
+  // Validaciones y guardado
   let handleGuardar = () => {
     if (!referencia || !descripcion || [categoria, genero, tipoPrenda].some(value => value === '')) {
       alert('Por favor, complete todos los campos antes de guardar.');
       return;
-    } 
-    if (referencia.length < 6 || referencia.length > 4) {
+    }
+
+    if (referencia.length < 4 || referencia.length > 6) {
       alert('La referencia debe tener entre 4 y 6 caracteres.');
       return;
     }
-    if (descripcion.length < 100 || descripcion.length > 5) {
+
+    if (descripcion.length < 5 || descripcion.length > 100) {
       alert('La descripción debe tener entre 5 y 100 caracteres.');
       return;
     }
-    else {
-      console.log('Referencia:', referencia);
-      console.log('Descripción:', descripcion);
-      console.log('Configuración Prenda:', configuracionPrenda);
-    }
 
+    console.log('Referencia:', referencia);
+    console.log('Descripción:', descripcion);
+    
+    // Marcar como guardado
+    setIsSaved(true);
   };
 
   return (
@@ -48,7 +53,6 @@ let App = () => {
 
       <div className="container">
         <form className="form">
-          
           {/* Referencia y Descripción */}
           <div className="form-row">
             <div className="input-group">
@@ -116,8 +120,8 @@ let App = () => {
             </div>
           </div>
 
-          {/* Mostrar Configuración Prenda automáticamente si hay una configuración válida */}
-          {configuracionPrenda && (
+          {/* Mostrar Configuración Prenda solo después de guardar */}
+          {isSaved && configuracionPrenda && (
             <div className="form-row">
               <p><strong>Configuración Prenda:</strong> {configuracionPrenda}</p>
             </div>
