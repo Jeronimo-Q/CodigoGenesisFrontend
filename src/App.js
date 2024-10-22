@@ -10,6 +10,7 @@ let App = () => {
   let [guardarPrenda, setGuardarPrenda] = useState(['', '', '']); 
   let [mostrarPrenda, setMostrarPrenda] = useState([]); 
 
+ 
   let handleGuardar = () => {
     if (!referencia || !descripcion || [categoria, genero, tipoPrenda].some(value => value === '')) {
       alert('Por favor, complete todos los campos antes de guardar.');
@@ -26,7 +27,7 @@ let App = () => {
       return;
     }
 
-
+    
     const nuevaPrenda = {
       referencia,
       descripcion,
@@ -35,13 +36,13 @@ let App = () => {
       tipoPrenda,
     };
 
-
+    
     setGuardarPrenda([nuevaPrenda.referencia, nuevaPrenda.descripcion, `${nuevaPrenda.categoria}, ${nuevaPrenda.genero}, ${nuevaPrenda.tipoPrenda}`]);
 
+    
+    setMostrarPrenda([`Categoria: ${nuevaPrenda.categoria},Genero:  ${nuevaPrenda.genero},Tipo de prenda ${nuevaPrenda.tipoPrenda}`]);
 
-    setMostrarPrenda([`${nuevaPrenda.referencia}: ${nuevaPrenda.descripcion} (${nuevaPrenda.categoria}, ${nuevaPrenda.genero}, ${nuevaPrenda.tipoPrenda})`]);
-
-
+    
     setReferencia('');
     setDescripcion('');
     setCategoria('');
@@ -57,7 +58,7 @@ let App = () => {
 
       <div className="container">
         <form className="form">
-
+          
           <div className="form-row">
             <div className="input-group">
               <label htmlFor="referencia" className="label">N° Referencia</label>
@@ -68,7 +69,7 @@ let App = () => {
                 value={referencia}
                 onChange={(e) => {
                   const value = e.target.value;
-
+                  
                   if (/^\d*$/.test(value)) {
                     setReferencia(value);
                   }
@@ -88,7 +89,7 @@ let App = () => {
             </div>
           </div>
 
-
+          
           <div className="form-row">
             <div className="input-group">
               <label htmlFor="categoria" className="label">Categoría</label>
