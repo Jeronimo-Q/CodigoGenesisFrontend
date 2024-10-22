@@ -7,10 +7,9 @@ let App = () => {
   let [categoria, setCategoria] = useState('');
   let [genero, setGenero] = useState('');
   let [tipoPrenda, setTipoPrenda] = useState('');
-  let [configuracionPrenda, setConfiguracionPrenda] = useState('');
-  let [isSaved, setIsSaved] = useState(false); 
+  let [guardarPrenda, setGuardarPrenda] = useState(['', '', '']); 
+  let [mostrarPrenda, setMostrarPrenda] = useState([]); 
 
- 
   let handleGuardar = () => {
     if (!referencia || !descripcion || [categoria, genero, tipoPrenda].some(value => value === '')) {
       alert('Por favor, complete todos los campos antes de guardar.');
@@ -27,12 +26,27 @@ let App = () => {
       return;
     }
 
-    console.log('Referencia:', referencia);
-    console.log('Descripción:', descripcion);
-    
-    
-    setConfiguracionPrenda(`Categoría: ${categoria}, Género: ${genero}, Tipo de prenda: ${tipoPrenda}`);
-    setIsSaved(true);
+
+    const nuevaPrenda = {
+      referencia,
+      descripcion,
+      categoria,
+      genero,
+      tipoPrenda,
+    };
+
+
+    setGuardarPrenda([nuevaPrenda.referencia, nuevaPrenda.descripcion, `${nuevaPrenda.categoria}, ${nuevaPrenda.genero}, ${nuevaPrenda.tipoPrenda}`]);
+
+
+    setMostrarPrenda([`${nuevaPrenda.referencia}: ${nuevaPrenda.descripcion} (${nuevaPrenda.categoria}, ${nuevaPrenda.genero}, ${nuevaPrenda.tipoPrenda})`]);
+
+
+    setReferencia('');
+    setDescripcion('');
+    setCategoria('');
+    setGenero('');
+    setTipoPrenda('');
   };
 
   return (
@@ -43,7 +57,7 @@ let App = () => {
 
       <div className="container">
         <form className="form">
-          
+
           <div className="form-row">
             <div className="input-group">
               <label htmlFor="referencia" className="label">N° Referencia</label>
@@ -54,7 +68,7 @@ let App = () => {
                 value={referencia}
                 onChange={(e) => {
                   const value = e.target.value;
-                
+
                   if (/^\d*$/.test(value)) {
                     setReferencia(value);
                   }
@@ -74,7 +88,7 @@ let App = () => {
             </div>
           </div>
 
-          
+
           <div className="form-row">
             <div className="input-group">
               <label htmlFor="categoria" className="label">Categoría</label>
@@ -117,9 +131,14 @@ let App = () => {
           </div>
 
           
-          {isSaved && configuracionPrenda && (
+          {mostrarPrenda.length > 0 && (
             <div className="form-row">
-              <p><strong>Configuración Prenda:</strong> {configuracionPrenda}</p>
+              <p><strong>Configuración Prenda:</strong></p>
+              <ul>
+                {mostrarPrenda.map((prenda, index) => (
+                  <li key={index}>{prenda}</li>
+                ))}
+              </ul>
             </div>
           )}
 
