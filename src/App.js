@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 
 let App = () => {
@@ -8,20 +8,9 @@ let App = () => {
   let [genero, setGenero] = useState('');
   let [tipoPrenda, setTipoPrenda] = useState('');
   let [configuracionPrenda, setConfiguracionPrenda] = useState('');
-  let [isSaved, setIsSaved] = useState(false); // Estado para controlar si se guardó la configuración
+  let [isSaved, setIsSaved] = useState(false); 
 
-  // Actualización de la configuración de la prenda
-  useEffect(() => {
-    if (isSaved) {
-      if (categoria && genero && tipoPrenda) {
-        setConfiguracionPrenda(`Categoría: ${categoria}, Género: ${genero}, Tipo de prenda: ${tipoPrenda}`);
-      } else {
-        setConfiguracionPrenda(''); // Si no hay selección, limpiar el texto
-      }
-    }
-  }, [isSaved, categoria, genero, tipoPrenda]);
-
-  // Validaciones y guardado
+ 
   let handleGuardar = () => {
     if (!referencia || !descripcion || [categoria, genero, tipoPrenda].some(value => value === '')) {
       alert('Por favor, complete todos los campos antes de guardar.');
@@ -41,7 +30,8 @@ let App = () => {
     console.log('Referencia:', referencia);
     console.log('Descripción:', descripcion);
     
-    // Marcar como guardado
+    
+    setConfiguracionPrenda(`Categoría: ${categoria}, Género: ${genero}, Tipo de prenda: ${tipoPrenda}`);
     setIsSaved(true);
   };
 
@@ -53,7 +43,7 @@ let App = () => {
 
       <div className="container">
         <form className="form">
-          {/* Referencia y Descripción */}
+          
           <div className="form-row">
             <div className="input-group">
               <label htmlFor="referencia" className="label">N° Referencia</label>
@@ -62,7 +52,13 @@ let App = () => {
                 id="referencia"
                 placeholder="Referencia"
                 value={referencia}
-                onChange={(e) => setReferencia(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                
+                  if (/^\d*$/.test(value)) {
+                    setReferencia(value);
+                  }
+                }}
               />
             </div>
 
@@ -78,7 +74,7 @@ let App = () => {
             </div>
           </div>
 
-          {/* Categoria, Género, Tipo de Prenda */}
+          
           <div className="form-row">
             <div className="input-group">
               <label htmlFor="categoria" className="label">Categoría</label>
@@ -120,14 +116,14 @@ let App = () => {
             </div>
           </div>
 
-          {/* Mostrar Configuración Prenda solo después de guardar */}
+          
           {isSaved && configuracionPrenda && (
             <div className="form-row">
               <p><strong>Configuración Prenda:</strong> {configuracionPrenda}</p>
             </div>
           )}
 
-          {/* Botones */}
+          
           <div className="buttons">
             <button type="button" className="btn cerrar" onClick={() => console.log("Cerrando...")}>
               Cerrar
