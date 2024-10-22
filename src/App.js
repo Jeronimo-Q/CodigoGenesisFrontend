@@ -11,7 +11,7 @@ let App = () => {
   let [mostrarPrenda, setMostrarPrenda] = useState([]); 
 
  
-  let handleGuardar = () => {
+  let botonGuardar = () => {
     if (!referencia || !descripcion || [categoria, genero, tipoPrenda].some(value => value === '')) {
       alert('Por favor, complete todos los campos antes de guardar.');
       return;
@@ -28,7 +28,7 @@ let App = () => {
     }
 
     
-    const nuevaPrenda = {
+    let nuevaPrenda = {
       referencia,
       descripcion,
       categoria,
@@ -65,10 +65,11 @@ let App = () => {
               <input
                 type="text"
                 id="referencia"
+                autoComplete='off'
                 placeholder="Referencia"
                 value={referencia}
                 onChange={(e) => {
-                  const value = e.target.value;
+                  let value = e.target.value;
                   
                   if (/^\d*$/.test(value)) {
                     setReferencia(value);
@@ -82,6 +83,7 @@ let App = () => {
               <input
                 type="text"
                 id="descripcion"
+                autoComplete='off'
                 placeholder="Descripción de la prenda"
                 value={descripcion}
                 onChange={(e) => setDescripcion(e.target.value)}
@@ -148,7 +150,7 @@ let App = () => {
             <button type="button" className="btn cerrar" onClick={() => console.log("Cerrando...")}>
               Cerrar
             </button>
-            <button type="button" className="btn guardar" onClick={handleGuardar}>
+            <button type="button" className="btn guardar" onClick={botonGuardar}>
               Guardar
             </button>
           </div>
