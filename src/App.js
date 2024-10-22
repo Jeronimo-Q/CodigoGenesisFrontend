@@ -1,42 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
-const App = () => {
-  const [referencia, setReferencia] = useState('');
-  const [descripcion, setDescripcion] = useState('');
-  const [categoria, setCategoria] = useState('');
-  const [genero, setGenero] = useState('');
-  const [tipoPrenda, setTipoPrenda] = useState('');
+let App = () => {
+  let [referencia, setReferencia] = useState('');
+  let [descripcion, setDescripcion] = useState('');
+  let [categoria, setCategoria] = useState('');
+  let [genero, setGenero] = useState('');
+  let [tipoPrenda, setTipoPrenda] = useState('');
+  let [configuracionPrenda, setConfiguracionPrenda] = useState('');
 
   
-  const [configuracionPrenda, setConfiguracionPrenda] = useState(['', '', '']); 
+  useEffect(() => {
 
-  const handleCategoriaChange = (e) => {
-    const nuevaCategoria = e.target.value;
-    setCategoria(nuevaCategoria);
-    setConfiguracionPrenda([nuevaCategoria, configuracionPrenda[1], configuracionPrenda[2]]);
-  };
+    if (categoria && genero && tipoPrenda) {
+      setConfiguracionPrenda(`Categoria: ${categoria} Genero: ${genero} Tipo de prenda: ${tipoPrenda}`);
+    } else {
+      setConfiguracionPrenda('');
+    }
+  }, [categoria, genero, tipoPrenda]);
 
-  const handleGeneroChange = (e) => {
-    const nuevoGenero = e.target.value;
-    setGenero(nuevoGenero);
-    setConfiguracionPrenda([configuracionPrenda[0], nuevoGenero, configuracionPrenda[2]]);
-  };
-
-  const handleTipoPrendaChange = (e) => {
-    const nuevoTipoPrenda = e.target.value;
-    setTipoPrenda(nuevoTipoPrenda);
-    setConfiguracionPrenda([configuracionPrenda[0], configuracionPrenda[1], nuevoTipoPrenda]);
-  };
-
-  const handleGuardar = () => {
-    if (!referencia || !descripcion || configuracionPrenda.some(value => value === '')) {
+  let handleGuardar = () => {
+    if (!referencia || !descripcion || [categoria, genero, tipoPrenda].some(value => value === '')) {
       alert('Por favor, complete todos los campos antes de guardar.');
       return;
+    } 
+    if (referencia.length < 6 || referencia.length > 4) {
+      alert('La referencia debe tener entre 4 y 6 caracteres.');
+      return;
     }
-    console.log('Referencia:', referencia);
-    console.log('Descripción:', descripcion);
-    console.log('Configuración Prenda:', configuracionPrenda.join('-')); 
+    if (descripcion.length < 100 || descripcion.length > 5) {
+      alert('La descripción debe tener entre 5 y 100 caracteres.');
+      return;
+    }
+    else {
+      console.log('Referencia:', referencia);
+      console.log('Descripción:', descripcion);
+      console.log('Configuración Prenda:', configuracionPrenda);
+    }
+
   };
 
   return (
@@ -48,7 +49,7 @@ const App = () => {
       <div className="container">
         <form className="form">
           
-          {/*Referencia - Descripción */}
+          {/* Referencia y Descripción */}
           <div className="form-row">
             <div className="input-group">
               <label htmlFor="referencia" className="label">N° Referencia</label>
@@ -73,18 +74,18 @@ const App = () => {
             </div>
           </div>
 
-          {/*Categoria, Genero y Tipo de Prenda */}
+          {/* Categoria, Género, Tipo de Prenda */}
           <div className="form-row">
             <div className="input-group">
               <label htmlFor="categoria" className="label">Categoría</label>
               <select
                 id="categoria"
                 value={categoria}
-                onChange={handleCategoriaChange}
+                onChange={(e) => setCategoria(e.target.value)}
               >
                 <option value="">Seleccione la categoría</option>
-                <option value="Categoria Info">Categoria Info</option>
-
+                <option value="Categoria1">Categoria1</option>
+                <option value="Categoria2">Categoria2</option>
               </select>
             </div>
 
@@ -93,10 +94,11 @@ const App = () => {
               <select
                 id="genero"
                 value={genero}
-                onChange={handleGeneroChange}
+                onChange={(e) => setGenero(e.target.value)}
               >
                 <option value="">Seleccione el género</option>
-                <option value="Genero Info">Genero Info</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
               </select>
             </div>
 
@@ -105,22 +107,23 @@ const App = () => {
               <select
                 id="tipoPrenda"
                 value={tipoPrenda}
-                onChange={handleTipoPrendaChange}
+                onChange={(e) => setTipoPrenda(e.target.value)}
               >
                 <option value="">Seleccione el tipo de prenda</option>
-                <option value="TipoPrenda Info">TipoPrenda Info</option>
+                <option value="Camiseta">Camiseta</option>
+                <option value="Pantalón">Pantalón</option>
               </select>
             </div>
           </div>
 
-          {/*ConfiguracionPrenda */}
-          {configuracionPrenda.every(value => value !== '') && (
+          {/* Mostrar Configuración Prenda automáticamente si hay una configuración válida */}
+          {configuracionPrenda && (
             <div className="form-row">
-              <p><strong>Configuración Prenda:</strong> {configuracionPrenda.join('-')}</p>
+              <p><strong>Configuración Prenda:</strong> {configuracionPrenda}</p>
             </div>
           )}
 
-          {/* botones */}
+          {/* Botones */}
           <div className="buttons">
             <button type="button" className="btn cerrar" onClick={() => console.log("Cerrando...")}>
               Cerrar
