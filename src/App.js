@@ -9,21 +9,33 @@ let App = () => {
   let [tipoPrenda, setTipoPrenda] = useState('');
   let [guardarPrenda, setGuardarPrenda] = useState(['', '', '']); 
   let [mostrarPrenda, setMostrarPrenda] = useState([]); 
-
- 
+  let [errores, setErrores] = useState({});  
+  
   let botonGuardar = () => {
-    if (!referencia || !descripcion || [categoria, genero, tipoPrenda].some(value => value === '')) {
-      alert('Por favor, complete todos los campos antes de guardar.');
-      return;
+    let erroresTemp = {};
+
+    
+    if (!referencia) {
+      erroresTemp.referencia = 'La referencia es obligatoria.';
+    } else if (referencia.length < 4 || referencia.length > 6) {
+      erroresTemp.referencia = 'La referencia debe tener entre 4 y 6 caracteres.';
     }
 
-    if (referencia.length < 4 || referencia.length > 6) {
-      alert('La referencia debe tener entre 4 y 6 caracteres.');
-      return;
+    
+    if (!descripcion) {
+      erroresTemp.descripcion = 'La descripción es obligatoria.';
+    } else if (descripcion.length < 5 || descripcion.length > 100) {
+      erroresTemp.descripcion = 'La descripción debe tener entre 5 y 100 caracteres.';
     }
 
-    if (descripcion.length < 5 || descripcion.length > 100) {
-      alert('La descripción debe tener entre 5 y 100 caracteres.');
+    
+    if (!categoria) erroresTemp.categoria = 'Seleccione una categoría.';
+    if (!genero) erroresTemp.genero = 'Seleccione un género.';
+    if (!tipoPrenda) erroresTemp.tipoPrenda = 'Seleccione un tipo de prenda.';
+
+    
+    if (Object.keys(erroresTemp).length > 0) {
+      setErrores(erroresTemp);
       return;
     }
 
@@ -36,10 +48,8 @@ let App = () => {
       tipoPrenda,
     };
 
-    
     setGuardarPrenda([nuevaPrenda.referencia, nuevaPrenda.descripcion, `${nuevaPrenda.categoria}, ${nuevaPrenda.genero}, ${nuevaPrenda.tipoPrenda}`]);
 
-    
     setMostrarPrenda([`Categoria: ${nuevaPrenda.categoria},Genero:  ${nuevaPrenda.genero},Tipo de prenda ${nuevaPrenda.tipoPrenda}`]);
 
     
@@ -48,6 +58,7 @@ let App = () => {
     setCategoria('');
     setGenero('');
     setTipoPrenda('');
+    setErrores({});  
   };
 
   return (
@@ -70,12 +81,12 @@ let App = () => {
                 value={referencia}
                 onChange={(e) => {
                   let value = e.target.value;
-                  
                   if (/^\d*$/.test(value)) {
                     setReferencia(value);
                   }
                 }}
               />
+              {errores.referencia && <p className="error-message">{errores.referencia}</p>} 
             </div>
 
             <div className="input-group">
@@ -88,10 +99,10 @@ let App = () => {
                 value={descripcion}
                 onChange={(e) => setDescripcion(e.target.value)}
               />
+              {errores.descripcion && <p className="error-message">{errores.descripcion}</p>} 
             </div>
           </div>
 
-          
           <div className="form-row">
             <div className="input-group">
               <label htmlFor="categoria" className="label">Categoría</label>
@@ -104,6 +115,7 @@ let App = () => {
                 <option value="Categoria1">Categoria1</option>
                 <option value="Categoria2">Categoria2</option>
               </select>
+              {errores.categoria && <p className="error-message">{errores.categoria}</p>} 
             </div>
 
             <div className="input-group">
@@ -117,6 +129,7 @@ let App = () => {
                 <option value="Masculino">Masculino</option>
                 <option value="Femenino">Femenino</option>
               </select>
+              {errores.genero && <p className="error-message">{errores.genero}</p>} 
             </div>
 
             <div className="input-group">
@@ -130,10 +143,10 @@ let App = () => {
                 <option value="Camiseta">Camiseta</option>
                 <option value="Pantalón">Pantalón</option>
               </select>
+              {errores.tipoPrenda && <p className="error-message">{errores.tipoPrenda}</p>} 
             </div>
           </div>
 
-          
           {mostrarPrenda.length > 0 && (
             <div className="form-row">
               <p><strong>Configuración Prenda:</strong></p>
@@ -145,7 +158,6 @@ let App = () => {
             </div>
           )}
 
-          
           <div className="buttons">
             <button type="button" className="btn cerrar" onClick={() => console.log("Cerrando...")}>
               Cerrar

@@ -109,3 +109,9 @@ input[type="text"], select {
   background-color: #008CFF;
   color: white;
 }
+
+.error-message {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
