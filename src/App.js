@@ -5,34 +5,51 @@ import './App.css';
 const App = () => {
   const [referencia, setReferencia] = useState('');
   const [descripcion, setDescripcion] = useState('');
-  const [categoria, setCategoria] = useState(''); // Solo para la selección de categoría
-  const [categorias, setCategorias] = useState([]); // Para almacenar el listado de categorías
+  const [categoria, setCategoria] = useState('');
   const [genero, setGenero] = useState('');
   const [tipoPrenda, setTipoPrenda] = useState('');
   const [guardarPrenda, setGuardarPrenda] = useState(['', '', '']);
   const [mostrarPrenda, setMostrarPrenda] = useState([]);
   const [errores, setErrores] = useState({});
+  const [products, setProducts] = useState([]);
   const [generos, setGeneros] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [tiposPrenda, setTiposPrenda] = useState([]);
+  const [prendaConfig, setPrendaConfig] = useState(null);
 
   useEffect(() => {
-    axios.get("http://localhost:8080/munamuinventory/api/v1/genres")
-      .then(response => {
-        console.log(response.data);
-        setGeneros(response.data.data);
-      })
-      .catch(error => {
-        console.error('Error fetching generos:', error);
-      });
+    axios.get('http://localhost:8080/munamuinventory/api/v1/genres')
+      .then(response => setGeneros(response.data.data))
+      .catch(error => console.error('Error fetching generos:', error));
 
-    axios.get("http://localhost:8080/munamuinventory/api/v1/categories")
+    axios.get('http://localhost:8080/munamuinventory/api/v1/categories')
+      .then(response => setCategorias(response.data.data))
+      .catch(error => console.error('Error fetching categorias:', error));
+
+    axios.get('http://localhost:8080/munamuinventory/api/v1/typegarments')
+      .then(response => setTiposPrenda(response.data.data))
+      .catch(error => console.error('Error fetching tipos de prenda:', error));
+  }, []);
+
+  useEffect(() => {
+    if (categoria && genero && tipoPrenda) {
+      axios.get('http://localhost:8080/munamuinventory/api/v1/garmentsconfigurations', {
+        params: {
+          categoryId: categoria,
+          genreId: genero,
+          typeGarmentId: tipoPrenda
+        }
+      })
       .then(response => {
-        console.log(response.data);
-        setCategorias(response.data.data); // Guardar en `categorias`
+        // Actualizar la configuración de la prenda
+        setPrendaConfig(response.data.data[0]); // Asumiendo que solo hay un resultado
       })
       .catch(error => {
-        console.error('Error fetching categorias:', error);
+        console.error('Error fetching prenda configuration:', error);
+        setPrendaConfig(null); // Si hay error, limpiamos la configuración
       });
-  }, []);
+    }
+  }, [categoria, genero, tipoPrenda]);
 
   const botonGuardar = () => {
     const erroresTemp = {};
@@ -59,16 +76,15 @@ const App = () => {
     }
 
     const nuevaPrenda = {
-      referencia,
-      descripcion,
-      categoria,
-      genero,
-      tipoPrenda,
+      id: "00000000-0000-0000-0000-000000000000",
+      reference: referencia,
+      description: descripcion,
+      garmentConfiguration: prendaConfig 
     };
 
-    setGuardarPrenda([nuevaPrenda.referencia, nuevaPrenda.descripcion, `${nuevaPrenda.categoria}, ${nuevaPrenda.genero}, ${nuevaPrenda.tipoPrenda}`]);
-
-    setMostrarPrenda([`Categoria: ${nuevaPrenda.categoria}, Genero: ${nuevaPrenda.genero}, Tipo de prenda ${nuevaPrenda.tipoPrenda}`]);
+    axios.post('http://localhost:8080/munamuinventory/api/v1/garments', nuevaPrenda)
+      .then(response => console.log("Prenda creada exitosamente:", response.data))
+      .catch(error => console.error("Error al crear la prenda:", error));
 
     setReferencia('');
     setDescripcion('');
@@ -86,7 +102,6 @@ const App = () => {
 
       <div className="container">
         <form className="form">
-          
           <div className="form-row">
             <div className="input-group">
               <label htmlFor="referencia" className="label">N° Referencia</label>
@@ -130,7 +145,7 @@ const App = () => {
               >
                 <option value="">Seleccione una categoria</option>
                 {categorias.map((ca) => (
-                  <option key={ca.id} value={ca.name}>{ca.name}</option>
+                  <option key={ca.id} value={ca.id}>{ca.name}</option>
                 ))}
               </select>
               {errores.categoria && <p className="error-message">{errores.categoria}</p>} 
@@ -145,7 +160,7 @@ const App = () => {
               >
                 <option value="">Seleccione un género</option>
                 {generos.map((gen) => (
-                  <option key={gen.id} value={gen.name}>{gen.name}</option>
+                  <option key={gen.id} value={gen.id}>{gen.name}</option>
                 ))}
               </select>
               {errores.genero && <p className="error-message">{errores.genero}</p>} 
@@ -159,21 +174,20 @@ const App = () => {
                 onChange={(e) => setTipoPrenda(e.target.value)}
               >
                 <option value="">Seleccione el tipo de prenda</option>
-                <option value="Camiseta">Camiseta</option>
-                <option value="Pantalón">Pantalón</option>
+                {tiposPrenda.map((tp) => (
+                  <option key={tp.id} value={tp.id}>{tp.name}</option>
+                ))}
               </select>
               {errores.tipoPrenda && <p className="error-message">{errores.tipoPrenda}</p>} 
             </div>
           </div>
 
-          {mostrarPrenda.length > 0 && (
+          {prendaConfig && (
             <div className="form-row">
               <p><strong>Configuración Prenda:</strong></p>
-              <ul>
-                {mostrarPrenda.map((prenda, index) => (
-                  <li key={index}>{prenda}</li>
-                ))}
-              </ul>
+              <p><strong>Categoría:</strong> {prendaConfig.category.name}</p>
+              <p><strong>Género:</strong> {prendaConfig.genre.name}</p>
+              <p><strong>Tipo de Prenda:</strong> {prendaConfig.typeGarment.name}</p>
             </div>
           )}
 
