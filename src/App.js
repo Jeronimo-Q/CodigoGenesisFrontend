@@ -8,15 +8,13 @@ const App = () => {
   const [categoria, setCategoria] = useState('');
   const [genero, setGenero] = useState('');
   const [tipoPrenda, setTipoPrenda] = useState('');
-  const [guardarPrenda, setGuardarPrenda] = useState(['', '', '']);
-  const [mostrarPrenda, setMostrarPrenda] = useState([]);
   const [errores, setErrores] = useState({});
-  const [products, setProducts] = useState([]);
   const [generos, setGeneros] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [tiposPrenda, setTiposPrenda] = useState([]);
   const [prendaConfig, setPrendaConfig] = useState(null);
 
+  // Cargar géneros, categorías y tipos de prendas al cargar la página
   useEffect(() => {
     axios.get('http://localhost:8080/munamuinventory/api/v1/genres')
       .then(response => setGeneros(response.data.data))
@@ -31,6 +29,7 @@ const App = () => {
       .catch(error => console.error('Error fetching tipos de prenda:', error));
   }, []);
 
+  // Obtener configuración de la prenda cuando se seleccionan los tres campos
   useEffect(() => {
     if (categoria && genero && tipoPrenda) {
       axios.get('http://localhost:8080/munamuinventory/api/v1/garmentsconfigurations', {
@@ -49,8 +48,9 @@ const App = () => {
         setPrendaConfig(null); // Si hay error, limpiamos la configuración
       });
     }
-  }, [categoria, genero, tipoPrenda]);
+  }, [categoria, genero, tipoPrenda]); // Este effect solo se ejecuta cuando uno de estos tres cambia
 
+  // Función para manejar la validación y guardar la prenda
   const botonGuardar = () => {
     const erroresTemp = {};
 
@@ -75,23 +75,28 @@ const App = () => {
       return;
     }
 
+    // Construir y enviar la solicitud POST
     const nuevaPrenda = {
       id: "00000000-0000-0000-0000-000000000000",
       reference: referencia,
       description: descripcion,
-      garmentConfiguration: prendaConfig 
+      garmentConfiguration: prendaConfig // Usar la configuración obtenida
     };
 
     axios.post('http://localhost:8080/munamuinventory/api/v1/garments', nuevaPrenda)
-      .then(response => console.log("Prenda creada exitosamente:", response.data))
+      .then(response => {
+        console.log("Prenda creada exitosamente:", response.data);
+        
+        // Restablecer los valores del formulario a su estado inicial
+        setReferencia('');
+        setDescripcion('');
+        setCategoria('');
+        setGenero('');
+        setTipoPrenda('');
+        setErrores({});
+        setPrendaConfig(null); // Limpiar la configuración de la prenda
+      })
       .catch(error => console.error("Error al crear la prenda:", error));
-
-    setReferencia('');
-    setDescripcion('');
-    setCategoria('');
-    setGenero('');
-    setTipoPrenda('');
-    setErrores({});
   };
 
   return (
@@ -192,9 +197,6 @@ const App = () => {
           )}
 
           <div className="buttons">
-            <button type="button" className="btn cerrar" onClick={() => console.log("Cerrando...")}>
-              Cerrar
-            </button>
             <button type="button" className="btn guardar" onClick={botonGuardar}>
               Guardar
             </button>
