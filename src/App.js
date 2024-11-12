@@ -13,9 +13,8 @@ const App = () => {
   const [categorias, setCategorias] = useState([]);
   const [tiposPrenda, setTiposPrenda] = useState([]);
   const [prendaConfig, setPrendaConfig] = useState(null);
-  const [mensajeExito, setMensajeExito] = useState('');
+  const [mensajeExito, setMensaje] = useState('');
 
-  // Cargar géneros, categorías y tipos de prendas al cargar la página
   useEffect(() => {
     axios.get('http://localhost:8080/munamuinventory/api/v1/genres')
       .then(response => setGeneros(response.data.data))
@@ -30,7 +29,6 @@ const App = () => {
       .catch(error => console.error('Error fetching tipos de prenda:', error));
   }, []);
 
-  // Obtener configuración de la prenda cuando se seleccionan los tres campos
   useEffect(() => {
     if (categoria && genero && tipoPrenda) {
       axios.get('http://localhost:8080/munamuinventory/api/v1/garmentsconfigurations', {
@@ -74,20 +72,17 @@ const App = () => {
       return;
     }
 
-    // Construir y enviar la solicitud POST
     const nuevaPrenda = {
       id: "00000000-0000-0000-0000-000000000000",
       reference: referencia,
       description: descripcion,
-      garmentConfiguration: prendaConfig // Usar la configuración obtenida
+      garmentConfiguration: prendaConfig
     };
 
     axios.post('http://localhost:8080/munamuinventory/api/v1/garments', nuevaPrenda)
       .then(response => {
-        // Mostrar mensaje de éxito
-        setMensajeExito(response.data.messages);
-        
-        // Limpiar formulario
+        setMensaje(response.data.messages);
+
         setReferencia('');
         setDescripcion('');
         setCategoria('');
@@ -95,9 +90,8 @@ const App = () => {
         setTipoPrenda('');
         setErrores({});
         setPrendaConfig(null);
-        
-        // Borrar mensaje de éxito después de 3 segundos
-        setTimeout(() => setMensajeExito(''), 3000);
+      setTimeout(() => setMensaje(''), 5000);
+
       })
       .catch(error => console.error("Error al crear la prenda:", error));
   };
@@ -199,7 +193,6 @@ const App = () => {
             </div>
           )}
 
-          {/* Mostrar mensaje de éxito si existe */}
           {mensajeExito && <p className="success-message">{mensajeExito}</p>}
 
           <div className="buttons">
