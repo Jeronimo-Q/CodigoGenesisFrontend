@@ -13,6 +13,7 @@ const App = () => {
   const [categorias, setCategorias] = useState([]);
   const [tiposPrenda, setTiposPrenda] = useState([]);
   const [prendaConfig, setPrendaConfig] = useState(null);
+  const [mensajeExito, setMensajeExito] = useState('');
 
   // Cargar géneros, categorías y tipos de prendas al cargar la página
   useEffect(() => {
@@ -40,17 +41,15 @@ const App = () => {
         }
       })
       .then(response => {
-        // Actualizar la configuración de la prenda
-        setPrendaConfig(response.data.data[0]); // Asumiendo que solo hay un resultado
+        setPrendaConfig(response.data.data[0]); 
       })
       .catch(error => {
         console.error('Error fetching prenda configuration:', error);
-        setPrendaConfig(null); // Si hay error, limpiamos la configuración
+        setPrendaConfig(null);
       });
     }
-  }, [categoria, genero, tipoPrenda]); // Este effect solo se ejecuta cuando uno de estos tres cambia
+  }, [categoria, genero, tipoPrenda]);
 
-  // Función para manejar la validación y guardar la prenda
   const botonGuardar = () => {
     const erroresTemp = {};
 
@@ -85,16 +84,20 @@ const App = () => {
 
     axios.post('http://localhost:8080/munamuinventory/api/v1/garments', nuevaPrenda)
       .then(response => {
-        console.log("Prenda creada exitosamente:", response.data);
+        // Mostrar mensaje de éxito
+        setMensajeExito(response.data.messages);
         
-        // Restablecer los valores del formulario a su estado inicial
+        // Limpiar formulario
         setReferencia('');
         setDescripcion('');
         setCategoria('');
         setGenero('');
         setTipoPrenda('');
         setErrores({});
-        setPrendaConfig(null); // Limpiar la configuración de la prenda
+        setPrendaConfig(null);
+        
+        // Borrar mensaje de éxito después de 3 segundos
+        setTimeout(() => setMensajeExito(''), 3000);
       })
       .catch(error => console.error("Error al crear la prenda:", error));
   };
@@ -195,6 +198,9 @@ const App = () => {
               <p><strong>Tipo de Prenda:</strong> {prendaConfig.typeGarment.name}</p>
             </div>
           )}
+
+          {/* Mostrar mensaje de éxito si existe */}
+          {mensajeExito && <p className="success-message">{mensajeExito}</p>}
 
           <div className="buttons">
             <button type="button" className="btn guardar" onClick={botonGuardar}>
