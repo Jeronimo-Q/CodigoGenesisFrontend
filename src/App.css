@@ -94,10 +94,9 @@ input[type="text"], select {
 }
 
 .btn {
-  padding: 15px 30px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  display: flex;
+  justify-content: flex-end; 
+  gap: 20px;
 }
 
 .cerrar {
@@ -108,6 +107,10 @@ input[type="text"], select {
 .guardar {
   background-color: #008CFF;
   color: white;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .error-message {
