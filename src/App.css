@@ -89,19 +89,22 @@ input[type="text"], select {
 
 .buttons {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Posiciona los botones en extremos opuestos */
   width: 100%;
-}
-
-.btn {
-  display: flex;
-  justify-content: flex-end; 
-  gap: 20px;
+  margin-top: 20px;
 }
 
 .cerrar {
   background-color: #008CFF;
   color: white;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cerrar:hover {
+  background-color: #0066CC;
 }
 
 .guardar {
@@ -111,6 +114,10 @@ input[type="text"], select {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.guardar:hover {
+  background-color: #0066CC;
 }
 
 .error-message {

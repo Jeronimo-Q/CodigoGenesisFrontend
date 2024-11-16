@@ -252,8 +252,10 @@ const App = () => {
             <button type="button" className="btn guardar" onClick={botonGuardar} disabled={loading}>
               Guardar
             </button>
+            <button type="button" className="btn cerrar"  onClick={() => console.log('Cerrar clic')}>
+              Cerrar
+            </button>
           </div>
-
           {mensajeExito && <p className="exito-message">{mensajeExito}</p>}
         </form>
       </div>
